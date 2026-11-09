@@ -14,6 +14,7 @@ public record TripResponse(
 	String currency,
 	TripLocationResponse location,
 	List<CategoryResponse> categories,
-	Instant createdAt
+	Instant createdAt,
+	Instant updatedAt
 ) {
 }

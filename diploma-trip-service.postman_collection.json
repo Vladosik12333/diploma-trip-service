@@ -30,8 +30,12 @@
         "header": [],
         "url": {
           "raw": "{{baseUrl}}/categories",
-          "host": ["{{baseUrl}}"],
-          "path": ["categories"]
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "categories"
+          ]
         }
       },
       "response": []
@@ -43,8 +47,13 @@
         "header": [],
         "url": {
           "raw": "{{baseUrl}}/locations/autocomplete?userInput=Wars",
-          "host": ["{{baseUrl}}"],
-          "path": ["locations", "autocomplete"],
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "locations",
+            "autocomplete"
+          ],
           "query": [
             {
               "key": "userInput",
@@ -77,8 +86,74 @@
         },
         "url": {
           "raw": "{{baseUrl}}/trips",
-          "host": ["{{baseUrl}}"],
-          "path": ["trips"]
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "trips"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "List user trips",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/trips?userId=1&search=Wars&page=0&size=10",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "trips"
+          ],
+          "query": [
+            {
+              "key": "userId",
+              "value": "1"
+            },
+            {
+              "key": "search",
+              "value": "Wars",
+              "description": "Optional. Case-insensitive match on title, city or country."
+            },
+            {
+              "key": "page",
+              "value": "0",
+              "description": "Optional. Zero-based page number, default 0."
+            },
+            {
+              "key": "size",
+              "value": "10",
+              "description": "Optional. Trips per page, 1–50, default 10."
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get trip details",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/trips/1?userId=1",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "trips",
+            "1"
+          ],
+          "query": [
+            {
+              "key": "userId",
+              "value": "1"
+            }
+          ]
         }
       },
       "response": []
