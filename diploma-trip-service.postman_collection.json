@@ -1,0 +1,87 @@
+{
+  "info": {
+    "_postman_id": "d4d33db7-5d7b-4fd9-8fef-92c420fc5640",
+    "name": "Diploma Trip Service",
+    "description": "Requests for the trip service API. Set the baseUrl collection variable to the running service URL.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080/api/v1",
+      "type": "string"
+    },
+    {
+      "key": "googlePlaceId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "categoryIds",
+      "value": "1",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Get categories",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/categories",
+          "host": ["{{baseUrl}}"],
+          "path": ["categories"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Autocomplete locations",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/locations/autocomplete?userInput=Wars",
+          "host": ["{{baseUrl}}"],
+          "path": ["locations", "autocomplete"],
+          "query": [
+            {
+              "key": "userInput",
+              "value": "Wars"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create trip",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"userId\": 1,\n  \"title\": \"Weekend in Warsaw\",\n  \"startDate\": \"2027-05-14\",\n  \"endDate\": \"2027-05-16\",\n  \"budgetAmount\": 500.00,\n  \"googlePlaceId\": \"{{googlePlaceId}}\",\n  \"categoryIds\": [{{categoryIds}}]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/trips",
+          "host": ["{{baseUrl}}"],
+          "path": ["trips"]
+        }
+      },
+      "response": []
+    }
+  ]
+}
