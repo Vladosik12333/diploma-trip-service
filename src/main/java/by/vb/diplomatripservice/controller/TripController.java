@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-@RequestMapping("/trips")
+@RequestMapping("/v1/trips")
 @RequiredArgsConstructor
 @Slf4j
 @Tag(name = "Trips", description = "Trip management")

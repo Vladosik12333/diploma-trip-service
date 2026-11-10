@@ -3,8 +3,11 @@ package by.vb.diplomatripservice.config;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.servers.Server;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.List;
 
 @Configuration
 public class OpenApiConfig {
@@ -15,6 +18,8 @@ public class OpenApiConfig {
 						.title("Diploma Trip Service API")
 						.description("API for managing trips, categories, and location suggestions.")
 						.version("v1")
-						.contact(new Contact().name("Diploma Trip Service")));
+						.contact(new Contact().name("Diploma Trip Service")))
+				// relative URL: "Try it out" calls the host serving Swagger UI (the gateway, or this service directly)
+				.servers(List.of(new Server().url("/api")));
 	}
 }

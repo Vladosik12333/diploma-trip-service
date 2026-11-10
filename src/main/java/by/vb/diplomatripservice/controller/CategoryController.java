@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/categories")
+@RequestMapping("/v1/categories")
 @RequiredArgsConstructor
 @Slf4j
 @Tag(name = "Categories", description = "Trip category lookup")

@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/locations")
+@RequestMapping("/v1/locations")
 @RequiredArgsConstructor
 @Slf4j
 @Tag(name = "Locations", description = "Location search")
