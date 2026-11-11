@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 public class TripSummaryResponseMapper implements Mapper<Trip, TripSummaryResponse> {
 	@Override
 	public TripSummaryResponse mapTo(Trip entity) {
-		return new TripSummaryResponse(entity.getId(), entity.getTitle(), entity.getStartDate(),
+		return new TripSummaryResponse(entity.getId(), entity.getTitle(), entity.getStartDate(), entity.getEndDate(),
 				entity.getLocation().getCity(), entity.getLocation().getCountry());
 	}
 }

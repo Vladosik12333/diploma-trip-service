@@ -19,7 +19,6 @@ public class OpenApiConfig {
 						.description("API for managing trips, categories, and location suggestions.")
 						.version("v1")
 						.contact(new Contact().name("Diploma Trip Service")))
-				// relative URL: "Try it out" calls the host serving Swagger UI (the gateway, or this service directly)
-				.servers(List.of(new Server().url("/api")));
+				.servers(List.of(new Server().url("/api/trip")));
 	}
 }

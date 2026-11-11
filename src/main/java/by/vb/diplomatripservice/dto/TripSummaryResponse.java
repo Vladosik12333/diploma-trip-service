@@ -6,6 +6,7 @@ public record TripSummaryResponse(
 	Long id,
 	String title,
 	LocalDate startDate,
+	LocalDate endDate,
 	String city,
 	String country
 ) {
