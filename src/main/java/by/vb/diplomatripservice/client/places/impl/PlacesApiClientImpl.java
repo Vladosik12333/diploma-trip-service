@@ -1,5 +1,6 @@
-package by.vb.diplomatripservice.service;
+package by.vb.diplomatripservice.client.places.impl;
 
+import by.vb.diplomatripservice.client.places.PlacesApiClient;
 import by.vb.diplomatripservice.constant.GooglePlacesConstants;
 import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.maps.places.v1.AutocompletePlacesRequest;
@@ -17,9 +18,10 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class PlacesApiService {
+public class PlacesApiClientImpl implements PlacesApiClient {
 	private final PlacesClient placesClient;
 
+	@Override
 	public AutocompletePlacesResponse autocomplete(String userInput) {
 		AutocompletePlacesRequest request = AutocompletePlacesRequest.newBuilder()
 				.setInput(userInput)
@@ -31,6 +33,7 @@ public class PlacesApiService {
 		return response;
 	}
 
+	@Override
 	public Place getPlace(String placeId) {
 		log.info("Requesting place details for place {}", placeId);
 
