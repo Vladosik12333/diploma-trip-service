@@ -25,8 +25,8 @@ public class LocationServiceImpl implements LocationService {
 	private final LocationOptionResponseMapper locationOptionResponseMapper;
 
 	@Override
-	public List<LocationOptionResponse> autocomplete(String userInput) {
-		AutocompletePlacesResponse response = placesApiClient.autocomplete(userInput);
+	public List<LocationOptionResponse> autocomplete(final String userInput) {
+		final AutocompletePlacesResponse response = placesApiClient.autocomplete(userInput);
 
 		return response.getSuggestionsList().stream()
 				.filter(AutocompletePlacesResponse.Suggestion::hasPlacePrediction)
@@ -36,15 +36,15 @@ public class LocationServiceImpl implements LocationService {
 	}
 
 	@Override
-	public TripLocation createLocation(String placeId) {
-		Place place = placesApiClient.getPlace(placeId);
+	public TripLocation createLocation(final String placeId) {
+		final Place place = placesApiClient.getPlace(placeId);
 
-		String city = place.getAddressComponentsList().stream()
+		final String city = place.getAddressComponentsList().stream()
 				.filter(component -> component.getTypesList().contains(GooglePlacesConstants.LOCALITY_TYPE))
 				.map(Place.AddressComponent::getLongText)
 				.findFirst().orElse(null);
 
-		String country = place.getAddressComponentsList().stream()
+		final String country = place.getAddressComponentsList().stream()
 				.filter(component -> component.getTypesList().contains(GooglePlacesConstants.COUNTRY_TYPE))
 				.map(Place.AddressComponent::getLongText)
 				.findFirst().orElse(null);
@@ -55,7 +55,7 @@ public class LocationServiceImpl implements LocationService {
 					"Google did not return a complete location for this place");
 		}
 
-		TripLocation location = new TripLocation();
+		final TripLocation location = new TripLocation();
 
 		location.setGooglePlaceId(place.getId());
 		location.setCity(city);

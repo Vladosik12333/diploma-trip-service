@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class TripLocationResponseMapper implements Mapper<TripLocation, TripLocationResponse> {
 	@Override
-	public TripLocationResponse mapTo(TripLocation location) {
+	public TripLocationResponse mapTo(final TripLocation location) {
 		return new TripLocationResponse(location.getGooglePlaceId(), location.getCity(),
 				location.getCountry(), location.getLatitude(), location.getLongitude());
 	}

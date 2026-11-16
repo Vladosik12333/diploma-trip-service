@@ -43,7 +43,7 @@ public class TripController {
 	@Operation(summary = "Create a trip", description = "Creates a trip with its destination and categories.")
 	@ApiResponse(responseCode = "201", description = "Trip created")
 	@ApiResponse(responseCode = "422", description = "Destination details are incomplete")
-	public BasicResponse<TripResponse> createTrip(@Valid @RequestBody CreateTripRequest request) {
+	public BasicResponse<TripResponse> createTrip(@Valid @RequestBody final CreateTripRequest request) {
 		log.info("Received trip creation request. Request={}", request);
 		return new BasicResponse<>(tripService.createTrip(request), StringUtils.EMPTY, true);
 	}
@@ -54,13 +54,13 @@ public class TripController {
 	@ApiResponse(responseCode = "200", description = "Trips returned")
 	@ApiResponse(responseCode = "400", description = "Invalid userId, search, page or size")
 	public BasicResponse<PageResponse<TripSummaryResponse>> getUserTrips(
-			@RequestParam @Positive Long userId,
+			@RequestParam @Positive final Long userId,
 			@Parameter(description = "Text to match in trip title, city or country", example = "Warsaw")
-			@RequestParam(required = false) @Size(max = TripConstants.SEARCH_MAX_LENGTH) String search,
+			@RequestParam(required = false) @Size(max = TripConstants.SEARCH_MAX_LENGTH) final String search,
 			@Parameter(description = "Zero-based page number", example = "0")
-			@RequestParam(defaultValue = "0") @Min(0) int page,
+			@RequestParam(defaultValue = "0") @Min(0) final int page,
 			@Parameter(description = "Trips per page", example = "10")
-			@RequestParam(defaultValue = "" + TripConstants.DEFAULT_PAGE_SIZE) @Min(1) @Max(TripConstants.MAX_PAGE_SIZE) int size
+			@RequestParam(defaultValue = "" + TripConstants.DEFAULT_PAGE_SIZE) @Min(1) @Max(TripConstants.MAX_PAGE_SIZE) final int size
 	) {
 		log.info("Received trips list request. userId={}, search={}, page={}, size={}", userId, search, page, size);
 		return new BasicResponse<>(tripService.getUserTrips(userId, search, page, size), StringUtils.EMPTY, true);
@@ -72,8 +72,8 @@ public class TripController {
 	@ApiResponse(responseCode = "400", description = "Invalid tripId or userId")
 	@ApiResponse(responseCode = "404", description = "Trip not found for this user")
 	public BasicResponse<TripResponse> getUserTrip(
-			@Parameter(description = "Trip ID", example = "1") @PathVariable @Positive Long tripId,
-			@Parameter(description = "Owner of the trip", example = "1") @RequestParam @Positive Long userId
+			@Parameter(description = "Trip ID", example = "1") @PathVariable @Positive final Long tripId,
+			@Parameter(description = "Owner of the trip", example = "1") @RequestParam @Positive final Long userId
 	) {
 		log.info("Received trip details request. tripId={}, userId={}", tripId, userId);
 		return new BasicResponse<>(tripService.getUserTrip(tripId, userId), StringUtils.EMPTY, true);

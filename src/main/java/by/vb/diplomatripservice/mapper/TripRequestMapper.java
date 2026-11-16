@@ -7,8 +7,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class TripRequestMapper implements Mapper<CreateTripRequest, Trip> {
 	@Override
-	public Trip mapTo(CreateTripRequest dto) {
-		Trip trip = new Trip();
+	public Trip mapTo(final CreateTripRequest dto) {
+		final Trip trip = new Trip();
 		trip.setUserId(dto.userId());
 		trip.setTitle(dto.title().trim());
 		trip.setStartDate(dto.startDate());

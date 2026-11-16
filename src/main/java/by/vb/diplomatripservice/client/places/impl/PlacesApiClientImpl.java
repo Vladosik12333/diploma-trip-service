@@ -22,30 +22,30 @@ public class PlacesApiClientImpl implements PlacesApiClient {
 	private final PlacesClient placesClient;
 
 	@Override
-	public AutocompletePlacesResponse autocomplete(String userInput) {
-		AutocompletePlacesRequest request = AutocompletePlacesRequest.newBuilder()
+	public AutocompletePlacesResponse autocomplete(final String userInput) {
+		final AutocompletePlacesRequest request = AutocompletePlacesRequest.newBuilder()
 				.setInput(userInput)
 				.addIncludedPrimaryTypes(GooglePlacesConstants.LOCALITY_TYPE)
 				.build();
 
-		AutocompletePlacesResponse response = placesClient.autocompletePlaces(request);
+		final AutocompletePlacesResponse response = placesClient.autocompletePlaces(request);
 		log.info("Received autocomplete response={}", response);
 		return response;
 	}
 
 	@Override
-	public Place getPlace(String placeId) {
+	public Place getPlace(final String placeId) {
 		log.info("Requesting place details for place {}", placeId);
 
-		GetPlaceRequest request = GetPlaceRequest.newBuilder()
+		final GetPlaceRequest request = GetPlaceRequest.newBuilder()
 				.setName(GooglePlacesConstants.PLACE_RESOURCE_PREFIX + placeId)
 				.build();
 
-		GrpcCallContext callContext = GrpcCallContext.createDefault()
+		final GrpcCallContext callContext = GrpcCallContext.createDefault()
 				.withExtraHeaders(Map.of(GooglePlacesConstants.FIELD_MASK_HEADER,
 						List.of(GooglePlacesConstants.DETAILS_FIELD_MASK)));
 
-		Place response = placesClient.getPlaceCallable().call(request, callContext);
+		final Place response = placesClient.getPlaceCallable().call(request, callContext);
 		log.info("Received place details response={}", response);
 		return response;
 	}

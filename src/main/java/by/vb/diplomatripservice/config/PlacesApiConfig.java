@@ -26,17 +26,17 @@ public class PlacesApiConfig {
 
 	private PlacesClient createClient() {
 		try {
-			Map<String, String> headers = Map.of(GooglePlacesConstants.API_KEY_HEADER, googleApiKey);
-			FixedHeaderProvider headersProvider = FixedHeaderProvider.create(headers);
+			final Map<String, String> headers = Map.of(GooglePlacesConstants.API_KEY_HEADER, googleApiKey);
+			final FixedHeaderProvider headersProvider = FixedHeaderProvider.create(headers);
 
-			PlacesSettings placesSettings =
+			final PlacesSettings placesSettings =
 					PlacesSettings.newBuilder()
 							.setHeaderProvider(headersProvider)
 							.setCredentialsProvider(NoCredentialsProvider.create())
 							.build();
 
 			return PlacesClient.create(placesSettings);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new ApiException(HttpStatus.INTERNAL_SERVER_ERROR,
 					"Error creating Google Places client", e);
 		}

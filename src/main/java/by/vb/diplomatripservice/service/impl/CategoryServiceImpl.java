@@ -23,14 +23,14 @@ public class CategoryServiceImpl implements CategoryService {
 
 	@Override
 	public List<CategoryResponse> getCategories() {
-		List<CategoryResponse> categories = categoryRepository.findAll().stream().map(categoryResponseMapper::mapTo).toList();
+		final List<CategoryResponse> categories = categoryRepository.findAll().stream().map(categoryResponseMapper::mapTo).toList();
 		log.info("Loaded {} categories", categories.size());
 		return categories;
 	}
 
 	@Override
-	public List<Category> getCategoriesByIds(Collection<Long> ids) {
-		List<Category> categories = categoryRepository.findAllByIdIn(ids);
+	public List<Category> getCategoriesByIds(final Collection<Long> ids) {
+		final List<Category> categories = categoryRepository.findAllByIdIn(ids);
 		log.info("Resolved {} of {} requested categories", categories.size(), ids.size());
 		return categories;
 	}

@@ -34,7 +34,7 @@ public class LocationController {
 	public BasicResponse<List<LocationOptionResponse>> autocomplete(
 			@Parameter(description = "Text to search for", example = "Warsaw")
 			@RequestParam @NotBlank @Size(min = LocationConstants.AUTOCOMPLETE_MIN_LENGTH,
-					max = LocationConstants.AUTOCOMPLETE_MAX_LENGTH) String userInput
+					max = LocationConstants.AUTOCOMPLETE_MAX_LENGTH) final String userInput
 	) {
 		log.info("Received location autocomplete request. User input={}", userInput);
 		return new BasicResponse<>(locationService.autocomplete(userInput), StringUtils.EMPTY, true);

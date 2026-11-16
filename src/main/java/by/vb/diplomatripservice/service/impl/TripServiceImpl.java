@@ -47,26 +47,26 @@ public class TripServiceImpl implements TripService {
 
 	@Override
 	@Transactional
-	public TripResponse createTrip(CreateTripRequest request) {
+	public TripResponse createTrip(final CreateTripRequest request) {
 		if (request.endDate().isBefore(request.startDate())) {
 			log.warn("Trip end date {} is before start date {}", request.endDate(), request.startDate());
 			throw new ApiException(HttpStatus.BAD_REQUEST, "endDate must not be before startDate");
 		}
 
-		List<Category> categories = categoryService.getCategoriesByIds(request.categoryIds());
+		final List<Category> categories = categoryService.getCategoriesByIds(request.categoryIds());
 		if (categories.size() != request.categoryIds().size()) {
 			log.warn("Invalid category IDs supplied for trip: {}", request.categoryIds());
 			throw new ApiException(HttpStatus.BAD_REQUEST, "One or more category IDs are invalid");
 		}
 
-		TripLocation location = locationService.createLocation(request.googlePlaceId());
+		final TripLocation location = locationService.createLocation(request.googlePlaceId());
 
-		Trip trip = tripRequestMapper.mapTo(request);
+		final Trip trip = tripRequestMapper.mapTo(request);
 		trip.setCategories(Set.copyOf(categories));
 		trip.setLocation(location);
 		location.setTrip(trip);
 
-		Trip saved = tripRepository.save(trip);
+		final Trip saved = tripRepository.save(trip);
 
 		log.info("Created trip={}", saved);
 
@@ -74,8 +74,8 @@ public class TripServiceImpl implements TripService {
 	}
 
 	@Override
-	public TripResponse getUserTrip(Long tripId, Long userId) {
-		Trip trip = tripRepository.findByIdAndUserId(tripId, userId)
+	public TripResponse getUserTrip(final Long tripId, final Long userId) {
+		final Trip trip = tripRepository.findByIdAndUserId(tripId, userId)
 				.orElseThrow(() -> {
 					log.warn("Trip not found. tripId={}, userId={}", tripId, userId);
 					return new ApiException(HttpStatus.NOT_FOUND, "Trip not found");
@@ -85,9 +85,9 @@ public class TripServiceImpl implements TripService {
 	}
 
 	@Override
-	public PageResponse<TripSummaryResponse> getUserTrips(Long userId, String search, int page, int size) {
-		Pageable pageable = PageRequest.of(page, size, USER_TRIPS_SORT);
-		Page<Trip> found = StringUtils.isBlank(search)
+	public PageResponse<TripSummaryResponse> getUserTrips(final Long userId, final String search, final int page, final int size) {
+		final Pageable pageable = PageRequest.of(page, size, USER_TRIPS_SORT);
+		final Page<Trip> found = StringUtils.isBlank(search)
 				? tripRepository.findAllByUserId(userId, pageable)
 				: tripRepository.searchUserTrips(userId, toLikePattern(search), pageable);
 
@@ -96,8 +96,8 @@ public class TripServiceImpl implements TripService {
 		return PageResponse.of(found, tripSummaryResponseMapper::mapTo);
 	}
 
-	private static String toLikePattern(String search) {
-		String escaped = search.trim().toLowerCase(Locale.ROOT)
+	private static String toLikePattern(final String search) {
+		final String escaped = search.trim().toLowerCase(Locale.ROOT)
 				.replace("\\", "\\\\")
 				.replace("%", "\\%")
 				.replace("_", "\\_");

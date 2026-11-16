@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class LocationOptionResponseMapper implements Mapper<PlacePrediction, LocationOptionResponse> {
 	@Override
-	public LocationOptionResponse mapTo(PlacePrediction prediction) {
+	public LocationOptionResponse mapTo(final PlacePrediction prediction) {
 		return new LocationOptionResponse(prediction.getText().getText(), prediction.getPlaceId());
 	}
 }
