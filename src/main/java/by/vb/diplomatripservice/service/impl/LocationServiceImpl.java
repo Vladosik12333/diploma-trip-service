@@ -4,6 +4,8 @@ import by.vb.diplomatripservice.client.geonames.GeoNamesClient;
 import by.vb.diplomatripservice.constant.GeoNamesConstants;
 import by.vb.diplomatripservice.dto.LocationOptionResponse;
 import by.vb.diplomatripservice.dto.geonames.GeoNamesCityResponse;
+import by.vb.diplomatripservice.dto.geonames.GeoNamesCountryInfoResponse;
+import by.vb.diplomatripservice.dto.geonames.GeoNamesCountryResponse;
 import by.vb.diplomatripservice.dto.geonames.GeoNamesSearchResponse;
 import by.vb.diplomatripservice.entity.Location;
 import by.vb.diplomatripservice.exception.ApiException;
@@ -12,6 +14,7 @@ import by.vb.diplomatripservice.repository.LocationRepository;
 import by.vb.diplomatripservice.service.LocationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -73,6 +76,8 @@ public class LocationServiceImpl implements LocationService {
 			throw new ApiException(HttpStatus.BAD_REQUEST, "City not found");
 		}
 
+		final String currency = getCurrency(city.countryCode());
+
 		final Location location = new Location();
 
 		location.setGeonameId(city.geonameId());
@@ -80,11 +85,34 @@ public class LocationServiceImpl implements LocationService {
 		location.setCountry(city.countryName());
 		location.setLatitude(city.lat());
 		location.setLongitude(city.lng());
+		location.setCurrency(currency);
 
 		final Location savedLocation = locationRepository.save(location);
 
 		log.info("Created location from GeoNames data. Location={}", savedLocation);
 
 		return savedLocation;
+	}
+
+	private String getCurrency(final String countryCode) {
+		final GeoNamesCountryInfoResponse countryInfo;
+
+		try {
+			countryInfo = geoNamesClient.getCountryInfo(countryCode, geoNamesUsername);
+		} catch (final RestClientException e) {
+			log.error("GeoNames country lookup failed. countryCode={}", countryCode, e);
+			throw new ApiException(HttpStatus.SERVICE_UNAVAILABLE, "Location service is unavailable", e);
+		}
+
+		return Stream.ofNullable(countryInfo.geonames())
+				.flatMap(List::stream)
+				.map(GeoNamesCountryResponse::currencyCode)
+				.filter(StringUtils::isNotBlank)
+				.findFirst()
+				.orElseThrow(() -> {
+					log.error("GeoNames returned no currency. countryCode={}, status={}", countryCode,
+							countryInfo.status());
+					return new ApiException(HttpStatus.SERVICE_UNAVAILABLE, "Location service is unavailable");
+				});
 	}
 }

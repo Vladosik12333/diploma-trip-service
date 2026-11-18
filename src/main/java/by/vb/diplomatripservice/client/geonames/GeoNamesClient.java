@@ -1,6 +1,7 @@
 package by.vb.diplomatripservice.client.geonames;
 
 import by.vb.diplomatripservice.dto.geonames.GeoNamesCityResponse;
+import by.vb.diplomatripservice.dto.geonames.GeoNamesCountryInfoResponse;
 import by.vb.diplomatripservice.dto.geonames.GeoNamesSearchResponse;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.service.annotation.GetExchange;
@@ -14,4 +15,7 @@ public interface GeoNamesClient {
 
 	@GetExchange("/getJSON?lang=en")
 	GeoNamesCityResponse getCity(@RequestParam long geonameId, @RequestParam String username);
+
+	@GetExchange("/countryInfoJSON")
+	GeoNamesCountryInfoResponse getCountryInfo(@RequestParam String country, @RequestParam String username);
 }

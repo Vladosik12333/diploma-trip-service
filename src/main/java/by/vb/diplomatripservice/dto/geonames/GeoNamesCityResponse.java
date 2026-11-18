@@ -9,6 +9,7 @@ public record GeoNamesCityResponse(
 	Long geonameId,
 	String name,
 	String countryName,
+	String countryCode,
 	BigDecimal lat,
 	BigDecimal lng,
 	GeoNamesStatusResponse status

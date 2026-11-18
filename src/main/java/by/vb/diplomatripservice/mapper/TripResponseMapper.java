@@ -14,7 +14,7 @@ public class TripResponseMapper implements Mapper<Trip, TripResponse> {
 	@Override
 	public TripResponse mapTo(final Trip entity) {
 		return new TripResponse(entity.getId(), entity.getTitle(), entity.getStartDate(), entity.getEndDate(),
-				entity.getBudgetAmount(), entity.getCurrency(), entity.getTravelMode(), entity.getTravelersCount(),
+				entity.getBudgetAmount(), entity.getLocation().getCurrency(), entity.getTravelMode(), entity.getTravelersCount(),
 				locationResponseMapper.mapTo(entity.getLocation()),
 				entity.getCategories().stream().map(categoryResponseMapper::mapTo).toList(), entity.getCreatedAt(), entity.getUpdatedAt());
 	}

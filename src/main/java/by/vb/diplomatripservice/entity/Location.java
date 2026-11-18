@@ -39,6 +39,9 @@ public class Location {
 	@Column(precision = 9, scale = 6, nullable = false)
 	private BigDecimal longitude;
 
+	@Column(name = "currency", length = 3, nullable = false)
+	private String currency;
+
 	@CreationTimestamp
 	@Column(name = "created_at", nullable = false, updatable = false)
 	private Instant createdAt;

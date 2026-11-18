@@ -43,9 +43,6 @@ public class Trip {
 	@Column(name = "budget_amount", precision = 12, scale = 2, nullable = false)
 	private BigDecimal budgetAmount;
 
-	@Column(name = "currency", length = 3, nullable = false)
-	private String currency;
-
 	@Enumerated(EnumType.STRING)
 	@Column(name = "travel_mode", length = 20, nullable = false)
 	private TravelMode travelMode;

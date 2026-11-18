@@ -4,7 +4,6 @@ import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public final class TripConstants {
-	public static final String DEFAULT_CURRENCY = "EUR";
 	public static final int MAX_TRAVELERS_COUNT = 10;
 	public static final int MAX_TRIP_DAYS = 3;
 	public static final int SEARCH_MAX_LENGTH = 100;
