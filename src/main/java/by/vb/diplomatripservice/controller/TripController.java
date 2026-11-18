@@ -42,7 +42,7 @@ public class TripController {
 	@ResponseStatus(HttpStatus.CREATED)
 	@Operation(summary = "Create a trip", description = "Creates a trip with its destination and categories.")
 	@ApiResponse(responseCode = "201", description = "Trip created")
-	@ApiResponse(responseCode = "422", description = "Destination details are incomplete")
+	@ApiResponse(responseCode = "400", description = "Invalid request or unsupported city")
 	public BasicResponse<TripResponse> createTrip(@Valid @RequestBody final CreateTripRequest request) {
 		log.info("Received trip creation request. Request={}", request);
 		return new BasicResponse<>(tripService.createTrip(request), StringUtils.EMPTY, true);

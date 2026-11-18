@@ -65,7 +65,7 @@
                 }
               ]
             },
-            "description": "Location suggestions from Google Places. Saves the first suggestion's `googlePlaceId` for **Create trip**."
+            "description": "City suggestions from GeoNames. Saves the first suggestion's `geonameId` for **Create trip**."
           },
           "event": [
             {
@@ -77,8 +77,8 @@
                   "const data = pm.response.json().data;",
                   "pm.test(\"Returns suggestions\", () => pm.expect(data).to.be.an(\"array\"));",
                   "if (data.length) {",
-                  "    pm.collectionVariables.set(\"googlePlaceId\", data[0].googlePlaceId);",
-                  "    console.log(`googlePlaceId = ${data[0].googlePlaceId} (${data[0].location})`);",
+                  "    pm.collectionVariables.set(\"geonameId\", data[0].geonameId);",
+                  "    console.log(`geonameId = ${data[0].geonameId} (${data[0].city}, ${data[0].country})`);",
                   "}"
                 ]
               }
@@ -110,10 +110,10 @@
                 "trips"
               ]
             },
-            "description": "Creates a trip. Run **Autocomplete locations** first to fill `googlePlaceId`. Saves the new trip id to `tripId` (shared with the plan service collection).",
+            "description": "Creates a trip. Run **Autocomplete locations** first to fill `geonameId`. Saves the new trip id to `tripId` (shared with the plan service collection).",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"userId\": {{userId}},\n  \"title\": \"Weekend in Warsaw\",\n  \"startDate\": \"2027-05-14\",\n  \"endDate\": \"2027-05-16\",\n  \"budgetAmount\": 500.00,\n  \"googlePlaceId\": \"{{googlePlaceId}}\",\n  \"categoryIds\": [{{categoryIds}}]\n}",
+              "raw": "{\n  \"userId\": {{userId}},\n  \"title\": \"Weekend in Warsaw\",\n  \"startDate\": \"2027-05-14\",\n  \"endDate\": \"2027-05-16\",\n  \"budgetAmount\": 500.00,\n  \"travelMode\": \"PUBLIC_TRANSPORT\",\n  \"travelersCount\": 2,\n  \"geonameId\": {{geonameId}},\n  \"categoryIds\": [{{categoryIds}}]\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -256,7 +256,7 @@
       "type": "string"
     },
     {
-      "key": "googlePlaceId",
+      "key": "geonameId",
       "value": "",
       "type": "string"
     },

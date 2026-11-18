@@ -13,23 +13,19 @@ import java.math.BigDecimal;
 import java.time.Instant;
 
 @Entity
-@Table(name = "trip_locations")
+@Table(name = "locations")
 @Getter
 @Setter
 @NoArgsConstructor
-@EqualsAndHashCode(exclude = "trip")
-@ToString(exclude = "trip")
-public class TripLocation {
+@EqualsAndHashCode
+@ToString
+public class Location {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@OneToOne(fetch = FetchType.LAZY, optional = false)
-	@JoinColumn(name = "trip_id", nullable = false, unique = true)
-	private Trip trip;
-
-	@Column(name = "google_place_id", nullable = false)
-	private String googlePlaceId;
+	@Column(name = "geoname_id", nullable = false, unique = true)
+	private Long geonameId;
 
 	@Column(name = "city", nullable = false)
 	private String city;

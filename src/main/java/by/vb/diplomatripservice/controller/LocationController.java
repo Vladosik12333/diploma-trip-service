@@ -29,7 +29,7 @@ public class LocationController {
 	private final LocationService locationService;
 
 	@GetMapping("/autocomplete")
-	@Operation(summary = "Autocomplete locations", description = "Returns matching city suggestions from Google Places.")
+	@Operation(summary = "Autocomplete locations", description = "Returns matching cities with at least 15,000 inhabitants from GeoNames, biggest first.")
 	@ApiResponse(responseCode = "200", description = "Location suggestions returned")
 	public BasicResponse<List<LocationOptionResponse>> autocomplete(
 			@Parameter(description = "Text to search for", example = "Warsaw")

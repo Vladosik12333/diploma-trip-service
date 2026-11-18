@@ -1,5 +1,7 @@
 package by.vb.diplomatripservice.dto;
 
+import by.vb.diplomatripservice.entity.enums.TravelMode;
+
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -12,7 +14,9 @@ public record TripResponse(
 	LocalDate endDate,
 	BigDecimal budgetAmount,
 	String currency,
-	TripLocationResponse location,
+	TravelMode travelMode,
+	Integer travelersCount,
+	LocationResponse location,
 	List<CategoryResponse> categories,
 	Instant createdAt,
 	Instant updatedAt

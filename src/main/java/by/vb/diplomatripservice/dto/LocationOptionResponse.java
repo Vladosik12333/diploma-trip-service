@@ -1,5 +1,4 @@
 package by.vb.diplomatripservice.dto;
 
-
-public record LocationOptionResponse(String location, String googlePlaceId) {
+public record LocationOptionResponse(Long geonameId, String city, String country) {
 }

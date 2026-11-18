@@ -1,70 +1,90 @@
 package by.vb.diplomatripservice.service.impl;
 
-import by.vb.diplomatripservice.client.places.PlacesApiClient;
-import by.vb.diplomatripservice.constant.GooglePlacesConstants;
+import by.vb.diplomatripservice.client.geonames.GeoNamesClient;
+import by.vb.diplomatripservice.constant.GeoNamesConstants;
 import by.vb.diplomatripservice.dto.LocationOptionResponse;
-import by.vb.diplomatripservice.entity.TripLocation;
+import by.vb.diplomatripservice.dto.geonames.GeoNamesCityResponse;
+import by.vb.diplomatripservice.dto.geonames.GeoNamesSearchResponse;
+import by.vb.diplomatripservice.entity.Location;
 import by.vb.diplomatripservice.exception.ApiException;
 import by.vb.diplomatripservice.mapper.LocationOptionResponseMapper;
+import by.vb.diplomatripservice.repository.LocationRepository;
 import by.vb.diplomatripservice.service.LocationService;
-import com.google.maps.places.v1.AutocompletePlacesResponse;
-import com.google.maps.places.v1.Place;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestClientException;
 
-import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional(readOnly = true)
 public class LocationServiceImpl implements LocationService {
-	private final PlacesApiClient placesApiClient;
+	private final GeoNamesClient geoNamesClient;
+	private final LocationRepository locationRepository;
 	private final LocationOptionResponseMapper locationOptionResponseMapper;
+
+	@Value("${geonames.username}")
+	private String geoNamesUsername;
 
 	@Override
 	public List<LocationOptionResponse> autocomplete(final String userInput) {
-		final AutocompletePlacesResponse response = placesApiClient.autocomplete(userInput);
+		final GeoNamesSearchResponse response;
 
-		return response.getSuggestionsList().stream()
-				.filter(AutocompletePlacesResponse.Suggestion::hasPlacePrediction)
-				.map(AutocompletePlacesResponse.Suggestion::getPlacePrediction)
+		try {
+			response = geoNamesClient.searchCities(userInput, GeoNamesConstants.AUTOCOMPLETE_MAX_RESULTS,
+					geoNamesUsername);
+		} catch (final RestClientException e) {
+			log.error("GeoNames city search failed. userInput={}", userInput, e);
+			throw new ApiException(HttpStatus.SERVICE_UNAVAILABLE, "Location service is unavailable", e);
+		}
+
+		return Stream.ofNullable(response.geonames())
+				.flatMap(List::stream)
 				.map(locationOptionResponseMapper::mapTo)
 				.toList();
 	}
 
 	@Override
-	public TripLocation createLocation(final String placeId) {
-		final Place place = placesApiClient.getPlace(placeId);
+	@Transactional
+	public Location getOrCreateLocation(final Long geonameId) {
+		return locationRepository.findByGeonameId(geonameId)
+				.orElseGet(() -> createLocation(geonameId));
+	}
 
-		final String city = place.getAddressComponentsList().stream()
-				.filter(component -> component.getTypesList().contains(GooglePlacesConstants.LOCALITY_TYPE))
-				.map(Place.AddressComponent::getLongText)
-				.findFirst().orElse(null);
+	private Location createLocation(final Long geonameId) {
+		final GeoNamesCityResponse city;
 
-		final String country = place.getAddressComponentsList().stream()
-				.filter(component -> component.getTypesList().contains(GooglePlacesConstants.COUNTRY_TYPE))
-				.map(Place.AddressComponent::getLongText)
-				.findFirst().orElse(null);
-
-		if (city == null || country == null || !place.hasLocation() || place.getId().isBlank()) {
-			log.warn("Google Places returned incomplete location data for place {}", place.getId());
-			throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY,
-					"Google did not return a complete location for this place");
+		try {
+			city = geoNamesClient.getCity(geonameId, geoNamesUsername);
+		} catch (final RestClientException e) {
+			log.error("GeoNames city lookup failed. geonameId={}", geonameId, e);
+			throw new ApiException(HttpStatus.SERVICE_UNAVAILABLE, "Location service is unavailable", e);
 		}
 
-		final TripLocation location = new TripLocation();
+		if (city.status() != null && city.status().value() == GeoNamesConstants.NOT_FOUND_STATUS) {
+			log.warn("GeoNames city not found. geonameId={}", geonameId);
+			throw new ApiException(HttpStatus.BAD_REQUEST, "City not found");
+		}
 
-		location.setGooglePlaceId(place.getId());
-		location.setCity(city);
-		location.setCountry(country);
-		location.setLatitude(BigDecimal.valueOf(place.getLocation().getLatitude()));
-		location.setLongitude(BigDecimal.valueOf(place.getLocation().getLongitude()));
+		final Location location = new Location();
 
-		log.info("Created location from Google Places data. Location={}", location);
+		location.setGeonameId(city.geonameId());
+		location.setCity(city.name());
+		location.setCountry(city.countryName());
+		location.setLatitude(city.lat());
+		location.setLongitude(city.lng());
 
-		return location;
+		final Location savedLocation = locationRepository.save(location);
+
+		log.info("Created location from GeoNames data. Location={}", savedLocation);
+
+		return savedLocation;
 	}
 }

@@ -1,12 +1,13 @@
 package by.vb.diplomatripservice.service.impl;
 
+import by.vb.diplomatripservice.constant.TripConstants;
 import by.vb.diplomatripservice.dto.CreateTripRequest;
 import by.vb.diplomatripservice.dto.PageResponse;
 import by.vb.diplomatripservice.dto.TripResponse;
 import by.vb.diplomatripservice.dto.TripSummaryResponse;
 import by.vb.diplomatripservice.entity.Category;
 import by.vb.diplomatripservice.entity.Trip;
-import by.vb.diplomatripservice.entity.TripLocation;
+import by.vb.diplomatripservice.entity.Location;
 import by.vb.diplomatripservice.exception.ApiException;
 import by.vb.diplomatripservice.mapper.TripRequestMapper;
 import by.vb.diplomatripservice.mapper.TripResponseMapper;
@@ -26,6 +27,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -53,18 +55,25 @@ public class TripServiceImpl implements TripService {
 			throw new ApiException(HttpStatus.BAD_REQUEST, "endDate must not be before startDate");
 		}
 
+		if (ChronoUnit.DAYS.between(request.startDate(), request.endDate()) >= TripConstants.MAX_TRIP_DAYS) {
+			log.warn("Trip from {} to {} is longer than {} days", request.startDate(), request.endDate(),
+					TripConstants.MAX_TRIP_DAYS);
+			throw new ApiException(HttpStatus.BAD_REQUEST,
+					"Trip must not be longer than " + TripConstants.MAX_TRIP_DAYS + " days");
+		}
+
 		final List<Category> categories = categoryService.getCategoriesByIds(request.categoryIds());
+
 		if (categories.size() != request.categoryIds().size()) {
 			log.warn("Invalid category IDs supplied for trip: {}", request.categoryIds());
 			throw new ApiException(HttpStatus.BAD_REQUEST, "One or more category IDs are invalid");
 		}
 
-		final TripLocation location = locationService.createLocation(request.googlePlaceId());
+		final Location location = locationService.getOrCreateLocation(request.geonameId());
 
 		final Trip trip = tripRequestMapper.mapTo(request);
 		trip.setCategories(Set.copyOf(categories));
 		trip.setLocation(location);
-		location.setTrip(trip);
 
 		final Trip saved = tripRepository.save(trip);
 
@@ -80,7 +89,9 @@ public class TripServiceImpl implements TripService {
 					log.warn("Trip not found. tripId={}, userId={}", tripId, userId);
 					return new ApiException(HttpStatus.NOT_FOUND, "Trip not found");
 				});
+
 		log.info("Found trip={}", trip);
+
 		return tripResponseMapper.mapTo(trip);
 	}
 
@@ -93,6 +104,7 @@ public class TripServiceImpl implements TripService {
 
 		log.info("Found {} of {} trips for userId={}, search={}, page={}, size={}",
 				found.getNumberOfElements(), found.getTotalElements(), userId, search, page, size);
+
 		return PageResponse.of(found, tripSummaryResponseMapper::mapTo);
 	}
 

@@ -1,5 +1,6 @@
 package by.vb.diplomatripservice.entity;
 
+import by.vb.diplomatripservice.entity.enums.TravelMode;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -42,6 +43,16 @@ public class Trip {
 	@Column(name = "budget_amount", precision = 12, scale = 2, nullable = false)
 	private BigDecimal budgetAmount;
 
+	@Column(name = "currency", length = 3, nullable = false)
+	private String currency;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "travel_mode", length = 20, nullable = false)
+	private TravelMode travelMode;
+
+	@Column(name = "travelers_count", nullable = false)
+	private Integer travelersCount;
+
 	@CreationTimestamp
 	@Column(name = "created_at", nullable = false, updatable = false)
 	private Instant createdAt;
@@ -50,8 +61,9 @@ public class Trip {
 	@Column(name = "updated_at", nullable = false)
 	private Instant updatedAt;
 
-	@OneToOne(mappedBy = "trip", cascade = CascadeType.ALL, orphanRemoval = true)
-	private TripLocation location;
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "location_id", nullable = false)
+	private Location location;
 
 	@ManyToMany
 	@JoinTable(name = "trip_categories",

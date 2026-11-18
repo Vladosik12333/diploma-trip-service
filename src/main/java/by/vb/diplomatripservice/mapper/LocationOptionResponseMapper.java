@@ -1,13 +1,13 @@
 package by.vb.diplomatripservice.mapper;
 
 import by.vb.diplomatripservice.dto.LocationOptionResponse;
-import com.google.maps.places.v1.AutocompletePlacesResponse.Suggestion.PlacePrediction;
+import by.vb.diplomatripservice.dto.geonames.GeoNamesCityResponse;
 import org.springframework.stereotype.Component;
 
 @Component
-public class LocationOptionResponseMapper implements Mapper<PlacePrediction, LocationOptionResponse> {
+public class LocationOptionResponseMapper implements Mapper<GeoNamesCityResponse, LocationOptionResponse> {
 	@Override
-	public LocationOptionResponse mapTo(final PlacePrediction prediction) {
-		return new LocationOptionResponse(prediction.getText().getText(), prediction.getPlaceId());
+	public LocationOptionResponse mapTo(final GeoNamesCityResponse city) {
+		return new LocationOptionResponse(city.geonameId(), city.name(), city.countryName());
 	}
 }
